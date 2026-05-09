@@ -1,0 +1,73 @@
+---
+import "../styles/global.css";
+import { sanityClient } from "sanity:client";
+
+// 1. Tell Astro which URLs to generate, filtering out any missing slugs
+export async function getStaticPaths() {
+  const galleries = await sanityClient.fetch(`
+    *[_type == "gallery" && defined(slug.current)]{
+      "slug": slug.current
+    }
+  `);
+
+  return galleries.map((gallery) => ({
+    params: { slug: gallery.slug },
+  }));
+}
+
+// 2. Grab the current slug from the URL
+const { slug } = Astro.params;
+
+// 3. Fetch all the data for just this specific gallery
+const gallery = await sanityClient.fetch(`
+  *[_type == "gallery" && slug.current == $slug][0]{
+    title,
+    "images": images[].secure_url
+  }
+`, { slug });
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{gallery.title} | Venu Photography</title>
+  </head>
+  <body class="bg-zinc-950 text-zinc-50 min-h-screen">
+    
+    <!-- Navigation Bar -->
+    <nav class="p-8 md:p-16 pb-0">
+      <a href="/" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 w-fit">
+        ← Back to all galleries
+      </a>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-8 md:p-16 pt-12">
+      <header class="mb-16">
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-4">
+          {gallery.title}
+        </h1>
+      </header>
+
+      <!-- Masonry-style Grid for the photos -->
+      <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+        {gallery.images && gallery.images.length > 0 ? (
+          gallery.images.map((imageUrl: string) => (
+            <div class="break-inside-avoid">
+              <img 
+                src={imageUrl} 
+                alt={`${gallery.title} photograph`} 
+                class="w-full rounded-lg bg-zinc-900 shadow-xl"
+                loading="lazy"
+              />
+            </div>
+          ))
+        ) : (
+          <p class="text-zinc-500">No images uploaded to this gallery yet.</p>
+        )}
+      </div>
+    </main>
+
+  </body>
+</html>
