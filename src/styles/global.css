@@ -17,3 +17,17 @@ h3,
 .font-serif {
   font-family: "Playfair Display", serif;
 }
+
+/* Global Image Protection */
+img {
+  /* Disables the long-press popup menu on iOS/Safari */
+  -webkit-touch-callout: none !important;
+
+  /* Prevents text/image selection */
+  user-select: none !important;
+  -webkit-user-select: none !important;
+
+  /* Prevents dragging the image to the desktop */
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
