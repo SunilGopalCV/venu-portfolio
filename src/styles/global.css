@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Tells Tailwind v4 to trigger dark mode when the .dark class is present */
+@custom-variant dark (&:is(.dark *));
+
+html {
+  font-family: "Inter", sans-serif;
+  /* Smooth transition when clicking the toggle */
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: "Playfair Display", serif;
+}

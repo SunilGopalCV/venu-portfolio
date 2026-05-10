@@ -1,66 +1,41 @@
 ---
-import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import FilmTape from "../components/FilmTape.astro";
+import Legacy from "../components/Legacy.astro";
+import BentoGrid from "../components/BentoGrid.astro";
+import Footer from "../components/Footer.astro"; // <-- Import Footer
 import { sanityClient } from "sanity:client";
 
-// We updated the query to grab the secure_url from the Cloudinary asset
-const galleries = await sanityClient.fetch(`
-  *[_type == "gallery"]{
+const featuredGalleries = await sanityClient.fetch(`
+  *[_type == "gallery" && featured == true && defined(slug.current)] | order(eventDate desc) {
     title,
+    category,
     "slug": slug.current,
     "imageUrl": coverImage.secure_url
   }
 `);
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Venu Photography</title>
-  </head>
-  <body class="bg-zinc-950 text-zinc-50 min-h-screen p-8 md:p-16">
-    
-    <div class="max-w-6xl mx-auto">
-      <header class="mb-16">
-        <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-4 text-white">
-          Venu <span class="text-zinc-500 italic">Photography</span>
-        </h1>
-        <p class="text-xl text-zinc-400 max-w-xl">
-          Capturing moments, telling stories.
-        </p>
-      </header>
+<Layout title="Venu Photography | Cinematic & Traditional Events">
+  
+  <Navbar />
+  <Hero />
 
-      {/* This is our new responsive grid */}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {galleries.map((gallery) => (
-          <a href={`/${gallery.slug}`} class="group block">
-            <div class="relative overflow-hidden rounded-2xl bg-zinc-900 aspect-[4/5]">
-              {gallery.imageUrl ? (
-                <img 
-                  src={gallery.imageUrl} 
-                  alt={gallery.title} 
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              ) : (
-                <div class="w-full h-full flex items-center justify-center text-zinc-600">
-                  No Image
-                </div>
-              )}
-              
-              {/* Gradient overlay for text readability */}
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity group-hover:opacity-100"></div>
-              
-              <div class="absolute bottom-0 left-0 p-6">
-                <h2 class="text-2xl font-semibold text-white translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  {gallery.title}
-                </h2>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
+  <main class="relative z-20 bg-zinc-950 min-h-screen">
+     <FilmTape />
+     <Legacy />
+     
+     {featuredGalleries.length > 0 ? (
+       <BentoGrid galleries={featuredGalleries} />
+     ) : (
+       <div class="py-32 text-center text-zinc-500 italic font-serif">
+          Log into Sanity and toggle "Feature on Homepage" for a few galleries to see them here.
+       </div>
+     )}
+  </main>
 
-  </body>
-</html>
+  <Footer /> <!-- <-- Add Footer here -->
+
+</Layout>

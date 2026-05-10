@@ -1,0 +1,77 @@
+---
+// src/components/FilmTape.astro
+
+// A collection of stunning placeholder images for the collage.
+// You can replace these with his actual Cloudinary URLs later.
+const row1Images = [
+  "https://www.taj.studio/wp-content/uploads/2018/10/Taj_20220124_0002-1200x800.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/05/Taj_0051.jpg",
+  "https://www.taj.studio/wp-content/uploads/2016/12/AJ02500-1200x800.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/03/049A0278.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/10/Taj_20220205_0019-1200x800.jpg",
+];
+
+const row2Images = [
+  "https://www.taj.studio/wp-content/uploads/2018/10/Taj_20220204_0008-1200x800.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/05/Taj_0060.jpg",
+  "https://www.taj.studio/wp-content/uploads/2016/12/1C7A1372-1200x800.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/03/049A7388.jpg",
+  "https://www.taj.studio/wp-content/uploads/2018/03/049A1182-1200x800.jpg",
+];
+
+// We double the arrays so the marquee loops seamlessly
+const doubledRow1 = [...row1Images, ...row1Images, ...row1Images];
+const doubledRow2 = [...row2Images, ...row2Images, ...row2Images];
+---
+
+<section class="w-full h-[50vh] bg-stone-50 dark:bg-zinc-950 overflow-hidden flex flex-col justify-center py-4 relative border-y border-stone-200 dark:border-zinc-900 z-20">
+  
+  <!-- Subtle inner shadow to blend the edges into the dark background -->
+  <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-zinc-950 to-transparent z-10 pointer-events-none"></div>
+  <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none"></div>
+
+  <!-- Row 1: Moves Left -->
+  <div class="flex flex-nowrap gap-4 mb-4 opacity-80 hover:opacity-100 transition-opacity duration-500 w-max animate-marquee-left">
+    {doubledRow1.map((img) => (
+      <div class="h-[20vh] md:h-[22vh] aspect-[3/2] shrink-0 bg-stone-100 dark:bg-zinc-900 border-[3px] border-zinc-950 rounded-sm overflow-hidden">
+        <img src={img} alt="Gallery collage" class="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-500 hover:scale-105" loading="lazy" />
+      </div>
+    ))}
+  </div>
+
+  <!-- Row 2: Moves Right -->
+  <div class="flex flex-nowrap gap-4 opacity-80 hover:opacity-100 transition-opacity duration-500 w-max animate-marquee-right">
+    {doubledRow2.map((img) => (
+      <div class="h-[20vh] md:h-[22vh] aspect-[3/2] shrink-0 bg-stone-100 dark:bg-zinc-900 border-[3px] border-zinc-950 rounded-sm overflow-hidden">
+        <img src={img} alt="Gallery collage" class="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-500 hover:scale-105" loading="lazy" />
+      </div>
+    ))}
+  </div>
+
+</section>
+
+<style>
+  /* Infinite scroll animations */
+  @keyframes marqueeLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.33%); } /* Shifts exactly one full set of the tripled array */
+  }
+
+  @keyframes marqueeRight {
+    0% { transform: translateX(-33.33%); }
+    100% { transform: translateX(0); }
+  }
+
+  .animate-marquee-left {
+    animation: marqueeLeft 40s linear infinite;
+  }
+
+  .animate-marquee-right {
+    animation: marqueeRight 40s linear infinite;
+  }
+  
+  /* Pause on hover for better user experience */
+  .animate-marquee-left:hover, .animate-marquee-right:hover {
+    animation-play-state: paused;
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+// src/components/BentoGrid.astro
+interface Props {
+  galleries: any[];
+}
+const { galleries } = Astro.props;
+---
+<section class="py-32 px-6 bg-stone-50 dark:bg-zinc-950 relative z-20">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="flex items-end justify-between mb-16">
+      <h2 class="text-4xl md:text-5xl font-serif text-stone-900 dark:text-white">Featured Masterpieces</h2>
+      <a href="/portfolio" class="hidden md:block text-amber-600 hover:text-amber-500 transition-colors uppercase tracking-widest text-sm">
+        View All Work →
+      </a>
+    </div>
+    
+    <!-- We use auto-rows-[300px] to set a base height, and grid-flow-dense to fill all empty spaces -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[300px] gap-4 grid-flow-dense">
+      {galleries.map((gallery, index) => {
+        // We create a pattern to assign different spans to different cards.
+        // The 'dense' flow will automatically rearrange them so there are no holes.
+        let sizeClass = "col-span-1 row-span-1"; // Base square
+        
+        if (index % 6 === 0) {
+           sizeClass = "md:col-span-2 md:row-span-2"; // Big Feature Block
+        } else if (index % 6 === 1 || index % 6 === 4) {
+           sizeClass = "md:col-span-2 md:row-span-1"; // Wide Landscape Block
+        } else if (index % 6 === 3) {
+           sizeClass = "md:col-span-1 md:row-span-2"; // Tall Portrait Block
+        }
+        
+        return (
+          <a 
+            href={`/${gallery.slug}`} 
+            class={`group relative overflow-hidden rounded-sm bg-stone-100 dark:bg-zinc-900 ${sizeClass}`}
+          >
+            <img 
+              src={gallery.imageUrl} 
+              alt={gallery.title}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
+            />
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-700"></div>
+            
+            <div class="absolute bottom-0 left-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <p class="text-amber-500/80 text-xs tracking-[0.2em] uppercase mb-3 drop-shadow-md">
+                {gallery.category}
+              </p>
+              <h3 class="text-3xl font-serif text-white drop-shadow-lg">
+                {gallery.title}
+              </h3>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="mt-12 text-center md:hidden">
+       <a href="/portfolio" class="text-amber-600 hover:text-amber-500 uppercase tracking-widest text-sm">
+        View All Work →
+      </a>
+    </div>
+
+  </div>
+</section>
